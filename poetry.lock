@@ -43,6 +43,7 @@ files = [
 [package.dependencies]
 marshmallow = ">=3.18.0"
 python-dotenv = "*"
+typing-extensions = {version = "*", markers = "python_version < \"3.11\""}
 
 [package.extras]
 dev = ["environs[tests]", "pre-commit (>=4.0,<5.0)", "tox"]
@@ -278,6 +279,7 @@ files = [
 [package.dependencies]
 markdown-it-py = ">=2.2.0"
 pygments = ">=2.13.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<9)"]
@@ -350,5 +352,5 @@ files = [
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.11"
-content-hash = "9921a09300882213dc3f24c44200b3c2a927272de50468da598ccda5164f8308"
+python-versions = "^3.10"
+content-hash = "133eaa848235467962a4f6cc05a78b7e318f2663269b8b2bc2ed8edff4d61f78"

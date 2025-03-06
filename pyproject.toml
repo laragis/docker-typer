@@ -9,7 +9,7 @@ readme = "README.md"
 docker-typer = "docker_typer.main:app"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 typer = "^0.15.2"
 python-dotenv = "^1.0.1"
 environs = "^14.1.1"

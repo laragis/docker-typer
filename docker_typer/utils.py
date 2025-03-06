@@ -1,7 +1,12 @@
 from functools import wraps
+import os
+import subprocess
+from environs import env
 from rich import print
 import pendulum
-from shlex import join
+from shlex import join, split
+from typer import Context, echo
+from .settings import APP_ENV, DEFAULT_ENV_FILE
 
 
 def print_cmd(cmd):
@@ -33,3 +38,27 @@ def log_execution_time(func):
 
         return result
     return wrapper
+
+def get_compose_opts():
+    opts = []
+    
+    if APP_ENV != "local":
+        opts = [*opts, "--env-file", env("_ENV_FILE")]
+        
+        compose_file = "docker-compose.yml" if APP_ENV == "local" else f"docker-compose.{APP_ENV}.yml"
+        opts = [*opts, "--file", compose_file]
+        
+    return opts
+
+def docker_compose_command(ctx: Context, command: str):
+    cmd = ["docker", "compose", *get_compose_opts(), command, *ctx.args]
+    print_cmd(cmd)
+    subprocess.run(cmd, check=True)
+    
+    
+def set_env_and_run(ctx: Context, env_file_suffix: str):
+    env_file = f"{DEFAULT_ENV_FILE}{env_file_suffix}"
+    os.environ["_ENV_FILE"] = env_file
+    env.read_env(env_file, override=True)
+    echo(env_file_suffix.strip("."))
+    subprocess.run(split(f"docker-typer {' '.join(ctx.args)}"), check=True)
