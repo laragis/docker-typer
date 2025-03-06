@@ -1,6 +1,12 @@
 from functools import wraps
 from rich import print
 import pendulum
+from shlex import join
+
+
+def print_cmd(cmd):
+    calc_time = pendulum.now().to_datetime_string()
+    print(f"[blue][{calc_time}][/blue] == ▶️  [green]{join(cmd)}[/green] ==")
 
 
 def log_execution_time(func):
@@ -23,7 +29,7 @@ def log_execution_time(func):
 
         # Print end time and execution duration
         # print(f"[bold green][{end_str}][/bold green] ✅ Command completed!")
-        print(f"[blue][{end_str}][/blue]⏳ Total execution time: [bold yellow]{duration}[/bold yellow]")
+        print(f"[blue][{end_str}][/blue] == ⏳ Total execution time: [bold yellow]{duration}[/bold yellow] ==")
 
         return result
     return wrapper

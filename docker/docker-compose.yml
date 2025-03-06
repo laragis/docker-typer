@@ -1,4 +1,7 @@
 services:
   busybox:
-    image: busybox
-    # tty: true
+    image: ttungbmt/busybox
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true

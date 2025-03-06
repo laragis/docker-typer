@@ -9,7 +9,7 @@ from rich import print
 from shlex import join, split
 from functools import wraps
 
-from .utils import log_execution_time
+from .utils import log_execution_time, print_cmd
 
 app = Typer()
 
@@ -72,31 +72,34 @@ def prod(ctx: Context):
 @app.command(
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True}
 )
+@log_execution_time
 def up(ctx: Context):
-    command = ['docker', 'compose', *get_compose_opts(), "up", *ctx.args]
-    # command = ['lss', '-al']
-    echo(join(command))
-    # subprocess.run(command, check=True)
+    cmd = ['docker', 'compose', *get_compose_opts(), "up", *ctx.args]
+    
+    print_cmd(cmd)
+    subprocess.run(cmd, check=True)
 
         
 @app.command(
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True}
 )
-def down(ctx: Context):
-    command = ['docker', 'compose', *get_compose_opts(), "down", *ctx.args]
-    subprocess.run(command, check=True)
-    
-
-
-
-@app.command()
 @log_execution_time
-def build():
-    calc_time = pendulum.now().to_datetime_string()
-    print(f"[blue][{calc_time}][/blue] 🔎 docker compose build")
+def down(ctx: Context):
+    cmd = ['docker', 'compose', *get_compose_opts(), "down", *ctx.args]
     
-    time.sleep(5)
+    print_cmd(cmd)
+    subprocess.run(cmd, check=True)
     
+
+@app.command(
+    context_settings={"allow_extra_args": True, "ignore_unknown_options": True}
+)
+@log_execution_time
+def build(ctx: Context):
+    cmd = ['docker', 'compose', *get_compose_opts(), "build", *ctx.args]
+    
+    print_cmd(cmd)
+    subprocess.run(cmd, check=True)
     
     
 @app.callback()
