@@ -6,12 +6,16 @@ from rich import print
 import pendulum
 from shlex import join, split
 from typer import Context, echo
-from .settings import APP_ENV, DEFAULT_ENV_FILE
+from .settings import APP_ENV, global_options, DEFAULT_ENV_FILE
+
+
+def get_calc_time_style():
+    calc_time = pendulum.now().to_datetime_string()
+    return f"[blue][{calc_time}][/blue]"
 
 
 def print_cmd(cmd):
-    calc_time = pendulum.now().to_datetime_string()
-    print(f"[blue][{calc_time}][/blue] == ▶️  [green]{join(cmd)}[/green] ==")
+    print(f"{get_calc_time_style()} == ▶️  [green]{join(cmd)}[/green] ==")
 
 
 def log_execution_time(func):
@@ -56,9 +60,23 @@ def docker_compose_command(ctx: Context, command: str):
     subprocess.run(cmd, check=True)
     
     
-def set_env_and_run(ctx: Context, env_file_suffix: str):
-    env_file = f"{DEFAULT_ENV_FILE}{env_file_suffix}"
+def set_env_and_run(ctx: Context, mode: str):
+    env_file_suffix = DEFAULT_ENV_FILE if mode == "local" else f".{mode}"
+    env_file = global_options.env_file if global_options.is_dirty("env_file") else f"{DEFAULT_ENV_FILE}{env_file_suffix}"
+    
     os.environ["_ENV_FILE"] = env_file
     env.read_env(env_file, override=True)
-    echo(env_file_suffix.strip("."))
+    
+    match mode:
+        case "local":
+            print(f"{(get_calc_time_style())} 🚀 Running on [bold green]**Local**[/bold green] environment. This is your personal development machine.")
+        case "development":
+            print(f"{(get_calc_time_style())} 👨‍💻 Running on [bold green]**Development**[/bold green] environment. Used for coding, debugging, and integration.")
+        case "testing":
+            print(f"{(get_calc_time_style())} 🧪 Running on [bold green]**Testing**[/bold green] environment. Used for QA and automated tests.")
+        case "staging":
+            print(f"{(get_calc_time_style())} 📦 Running on [bold green]**Staging**[/bold green] environment. Mirrors production for final verification.")
+        case "production":
+            print(f"{(get_calc_time_style())} 🌍 Running on [bold green]**Production**[/bold green] environment. Live system used by real users. ")
+            
     subprocess.run(split(f"docker-typer {' '.join(ctx.args)}"), check=True)

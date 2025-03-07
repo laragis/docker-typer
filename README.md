@@ -8,6 +8,11 @@ The awesome Docker Typer
 
 ## Cli
 
+```shell
+docker-typer --env-file .env --working-dir ./ build
+docker-typer build --env-file .env --working-dir ./
+```
+
 - Databases:
   - mysql
   - mariadb
